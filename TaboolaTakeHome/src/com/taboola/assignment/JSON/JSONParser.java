@@ -14,6 +14,10 @@ class JSONParser {
         position= 0;
     }
 
+    /** Parses a JSON object.
+     *
+     * @return The parsed JSON object as a Map. */
+
     public Map<String, Object> parseObject() {
         Map<String, Object> jsonObject= new HashMap<>();
         consumeToken(TokenType.LEFT_BRACE);
@@ -42,6 +46,10 @@ class JSONParser {
         return jsonObject;
     }
 
+    /** Parses a JSON array.
+     *
+     * @return The parsed JSON array as a List. */
+
     public List<Object> parseArray() {
         List<Object> jsonArray= new ArrayList<>();
         consumeToken(TokenType.LEFT_BRACKET);
@@ -58,6 +66,10 @@ class JSONParser {
         consumeToken(TokenType.RIGHT_BRACKET);
         return jsonArray;
     }
+
+    /** Parses various types of JSON values.
+     *
+     * @return The parsed JSON value. */
 
     public Object parse() {
         Token currentToken= tokens.get(position);
@@ -97,6 +109,12 @@ class JSONParser {
         }
     }
 
+    /** Consumes and validates the next token's type.
+     *
+     * @param expectedType The expected type of the next token.
+     * @return The consumed token.
+     * @throws RuntimeException if the actual token type doesn't match the expected type. */
+
     private Token consumeToken(TokenType expectedType) {
         Token currentToken= tokens.get(position);
         if (currentToken.type == expectedType) {
@@ -108,34 +126,4 @@ class JSONParser {
         }
     }
 
-    public static void main(String[] args) {
-        String jsonString= "{" +
-            "    \"level1\": {\n" +
-            "        \"level2\": {\n" +
-            "            \"level3\": {\n" +
-            "                \"level4\": {\n" +
-            "                    \"level5\": {\n" +
-            "                        \"value\": \"deeply nested value\"\n" +
-            "                    }\n" +
-            "                }\n" +
-            "            }\n" +
-            "        }\n" +
-            "    }\n" +
-            "}";
-
-        JSONLexer lexer= new JSONLexer(jsonString);
-        List<Token> tokens= lexer.tokenize();
-
-        JSONParser parser= new JSONParser(tokens);
-        Map<String, Object> jsonObject= (Map<String, Object>) parser.parse();
-
-        Map<String, Object> level1= (Map<String, Object>) jsonObject.get("level1");
-        Map<String, Object> level2= (Map<String, Object>) level1.get("level2");
-        Map<String, Object> level3= (Map<String, Object>) level2.get("level3");
-        Map<String, Object> level4= (Map<String, Object>) level3.get("level4");
-        Map<String, Object> level5= (Map<String, Object>) level4.get("level5");
-        Object value= level5.get("value");
-        System.out.println(value);
-
-    }
 }
