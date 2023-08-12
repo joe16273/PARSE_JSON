@@ -1,1 +1,3 @@
+In order to support other data types, we can make use of Generics. The declaration of the node class would be like this: public class Node<T>. Then we will also have to make the TreeSerializer interface generic and edit the methods accordingly. 
 
+Another way which we could try that came into my mind while doing the first question was if we use a format like JSON for serialization. I am not sure if this would work but it sounds like an interesting approach. 
