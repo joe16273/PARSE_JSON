@@ -14,6 +14,7 @@ public class JSONParserTester {
         testNumericValues();
         testEmptyObject();
         testEmptyInput();
+        testComplexJsonObject();
 
         System.out.println("All tests passed successfully.");
     }
@@ -225,4 +226,82 @@ public class JSONParserTester {
         }
     }
 
+    public static void testComplexJsonObject() {
+        String jsonString= "{" +
+            "\"area-items\": {" +
+            "    \"2\": [" +
+            "      {" +
+            "        \"id\": -250384452623414200," +
+            "        \"title\": \"Probe Agency NIA Convicts 5 Members Of Banned Outfit In Bijnor Blast Case\"," +
+            "        \"url\": \"https://www.ndtv.com/india-news/nia-court-convicts-5-simi-members-in-bijnor-ied-blast-case-3120426\"," +
+            "        \"description\": \"A special National Investigation Agency (NIA) court in Lucknow has convicted five members of the banned organisation SIMI to commit terrorist acts and sentenced them to rigorous imprisonment in the 2014 Bijnor blast case\"," +
+            "        \"publishEpochMillis\": 1656742080000," +
+            "        \"expirationEpochMillis\": 1656914880000," +
+            "        \"modifiedEpochMillis\": null," +
+            "        \"tags\": [" +
+            "          \"simi\"," +
+            "          \"national investigation agency\"," +
+            "          \"bijnor blast case\"" +
+            "        ]," +
+            "        \"categories\": [" +
+            "          \"news\"" +
+            "        ]," +
+            "        \"flags\": []," +
+            "        \"blocked\": false," +
+            "        \"thumbnail-url\": \"https://c.ndtvimg.com/2022-06/8jh8j9f8_police-generic-_625x300_01_June_22.jpg\"," +
+            "        \"publish-date\": \"2022-07-02 11:38:00\"," +
+            "        \"expiration-date\": \"2022-07-04 11:38:00\"," +
+            "        \"modified-date\": null," +
+            "        \"flag-update-time\": null" +
+            "      }" +
+            "    ]" +
+            "  }" +
+            "}";
+
+        JSONLexer lexer= new JSONLexer(jsonString);
+        List<Token> tokens= lexer.tokenize();
+
+        JSONParser parser= new JSONParser(tokens);
+        Map<String, Object> jsonObject= (Map<String, Object>) parser.parse();
+        System.out.println(jsonObject);
+
+        Map<String, Object> areaItems= (Map<String, Object>) jsonObject.get("area-items");
+        List<Map<String, Object>> itemsList= (List<Map<String, Object>>) areaItems.get("2");
+
+        // Validate the content of the nested object and array
+        assert itemsList.size() == 1;
+        Map<String, Object> item= itemsList.get(0);
+        assert item.get("title")
+            .equals("Probe Agency NIA Convicts 5 Members Of Banned Outfit In Bijnor Blast Case");
+        assert item.get("url").equals(
+            "https://www.ndtv.com/india-news/nia-court-convicts-5-simi-members-in-bijnor-ied-blast-case-3120426");
+        assert item.get("description").equals(
+            "A special National Investigation Agency (NIA) court in Lucknow has convicted five members of the banned organisation SIMI to commit terrorist acts and sentenced them to rigorous imprisonment in the 2014 Bijnor blast case");
+
+        // Add more assertions to validate other fields in the item
+        assert item.get("publishEpochMillis").equals(1656742080000L);
+        assert item.get("expirationEpochMillis").equals(1656914880000L);
+        assert item.get("modifiedEpochMillis") == null;
+
+        List<String> tags= (List<String>) item.get("tags");
+        assert tags.contains("simi");
+        assert tags.contains("national investigation agency");
+        assert tags.contains("bijnor blast case");
+
+        List<String> categories= (List<String>) item.get("categories");
+        assert categories.contains("news");
+
+        List<String> flags= (List<String>) item.get("flags");
+        assert flags.isEmpty();
+        assert item.get("id").equals(-250384452623414200L);
+
+        assert item.get("blocked").equals(false);
+        assert item.get("thumbnail-url")
+            .equals(
+                "https://c.ndtvimg.com/2022-06/8jh8j9f8_police-generic-_625x300_01_June_22.jpg");
+        assert item.get("publish-date").equals("2022-07-02 11:38:00");
+        assert item.get("expiration-date").equals("2022-07-04 11:38:00");
+        assert item.get("modified-date") == null;
+        assert item.get("flag-update-time") == null;
+    }
 }
