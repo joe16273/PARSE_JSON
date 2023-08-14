@@ -86,13 +86,24 @@ class JSONParser {
                 if (numberValue.contains(".")) {
                     return -Double.parseDouble(numberValue);
                 } else {
-                    return -Integer.parseInt(numberValue);
+                    try {
+                        return -Integer.parseInt(numberValue);
+                    } catch (NumberFormatException e) {
+                        return -Long.parseLong(numberValue);
+                    }
                 }
-            }
-            if (numberValue.contains(".")) {
-                return Double.parseDouble(numberValue); // Return as decimal if it has a dot
             } else {
-                return Integer.parseInt(numberValue); // Return as integer otherwise
+
+                if (numberValue.contains(".")) {
+                    return Double.parseDouble(numberValue); // Return as decimal if it has a dot
+                } else {
+                    try {
+                        return Integer.parseInt(numberValue);
+                    } catch (NumberFormatException e) {
+                        return Long.parseLong(numberValue);
+                    }
+
+                }
             }
         case BOOLEAN:
             position++ ;
