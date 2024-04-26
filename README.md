@@ -1,4 +1,4 @@
-# Taboola_TakeHome_Assignment
+
 Hello!
 This repository is divided in the following way:
 1. The SQL_QUESTION folder contains the answer  to the third question. I have included one file which contains all the tables and the query.
